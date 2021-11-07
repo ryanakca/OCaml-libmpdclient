@@ -16,4 +16,4 @@
 	 mpd_lwt_status
 	 get_mpd_responses)
   (libraries libmpdclient lwt lwt.unix)
-)
+  (preprocess (pps lwt_ppx)))

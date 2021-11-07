@@ -18,7 +18,6 @@
  *)
 
 open Lwt
-open Mpd
 
 (* Simple client that connects to a mpd server with the "idle" command and get
  * one event of the mpd server. *)
@@ -33,8 +32,10 @@ let main_thread =
        >>= fun connection ->
          Mpd.Client_lwt.initialize connection
          >>= fun client ->
-           Lwt_io.write_line Lwt_io.stdout (Mpd.Client_lwt.mpd_banner client)
-           >>= fun () ->
+           Mpd.Client_lwt.mpd_banner client
+           >>= fun banner ->
+           Lwt_io.write_line Lwt_io.stdout banner
+            >>= fun () ->
              Lwt.join [
                let thread1 =  begin
                  Lwt_io.write_line Lwt_io.stdout "Thread one: idle"
@@ -49,7 +50,7 @@ let main_thread =
                let _ = Lwt.on_cancel thread1 (fun () ->
                  Lwt_io.write_line Lwt_io.stdout "Thread one: canceled"
                  |> Lwt.ignore_result) in
-               thread1;
+               thread1;%lwt
                let thread2 = begin
                  Lwt_io.write_line Lwt_io.stdout "Thread two: Wait"
                  >>= fun () ->
