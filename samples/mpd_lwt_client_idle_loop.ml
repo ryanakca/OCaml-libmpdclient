@@ -18,7 +18,6 @@
  *)
 
 open Lwt
-open Mpd
 
 (* Simple client that connects to a mpd server with the "idle" command and get
  * all the events of the mpd server.
@@ -40,7 +39,9 @@ let main_thread =
        >>= fun () ->
          Mpd.Client_lwt.initialize connection
          >>= fun client ->
-           Lwt_io.write_line Lwt_io.stdout (Mpd.Client_lwt.mpd_banner client)
+           Mpd.Client_lwt.mpd_banner client
+           >>= fun banner ->
+           Lwt_io.write_line Lwt_io.stdout banner
            >>= fun () ->
              Mpd.Client_lwt.idle_loop client on_mpd_event
              >>= fun () ->
